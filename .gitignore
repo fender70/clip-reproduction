@@ -1,0 +1,71 @@
+# -----------------------------
+# Python
+# -----------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing / tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# -----------------------------
+# Jupyter
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# macOS / editors
+# -----------------------------
+.DS_Store
+.vscode/
+.idea/
+
+# -----------------------------
+# Environment / secrets
+# -----------------------------
+.env
+.env.*
+*.key
+
+# -----------------------------
+# Datasets
+# Keep documentation describing
+# how to obtain the data.
+# -----------------------------
+data/*
+!data/README.md
+
+# -----------------------------
+# Experiment outputs
+# -----------------------------
+outputs/
+checkpoints/
+logs/
+wandb/
+runs/
+
+# -----------------------------
+# Model weights / large artifacts
+# -----------------------------
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+
+# -----------------------------
+# Temporary files
+# -----------------------------
+*.tmp
+*.log
