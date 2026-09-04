@@ -29,39 +29,39 @@ The emphasis is on distinguishing:
 
 ## Core CLIP Mechanism
 
-Given a batch of aligned image-text pairs
+Given a batch of aligned image-text pairs:
 
-$$
-(x_1,t_1),\ldots,(x_B,t_B),
-$$
+```math
+(x_1,t_1),\ldots,(x_B,t_B)
+```
 
 CLIP encodes images and text into a shared embedding space and L2-normalizes the resulting vectors.
 
-The pairwise similarity matrix is
+The pairwise similarity matrix is:
 
-$$
-S = \hat{I}\hat{T}^{\top},
-$$
+```math
+S = \hat{I}\hat{T}^{\top}
+```
 
-where
+where:
 
-$$
+```math
 S_{ij}
-$$
+```
 
-represents the cosine similarity between image \(i\) and text \(j\).
+represents the cosine similarity between image `i` and text `j`.
 
 For correctly ordered image-text pairs, the positive examples lie along the diagonal:
 
 ```text
              Text
           T0  T1  T2  T3
-       ┌────────────────
+       ┌─────────────────
 I0     │  ✓
 I1     │      ✓
 I2     │          ✓
 I3     │              ✓
-       └────────────────
+       └─────────────────
  Image
 ```
 
@@ -78,17 +78,27 @@ For text-to-image matching, every text must identify its corresponding image.
 
 The final objective is the symmetric average:
 
-$$
-L_\text{CLIP}
+```math
+L_{\mathrm{CLIP}}
 =
 \frac{
 L_{I\rightarrow T}
 +
 L_{T\rightarrow I}
-}{2}.
-$$
+}{2}
+```
 
 A learned temperature/logit-scale parameter controls the sharpness of the resulting probability distribution.
+
+If `s_ij` is the cosine similarity between image `i` and text `j`, CLIP uses scaled logits of the form:
+
+```math
+\mathrm{logit}_{ij}
+=
+\exp(t)\,s_{ij}
+```
+
+where `t` is a learned log-scale parameter.
 
 ---
 
@@ -130,32 +140,32 @@ clip-reproduction/
 
 ### Directory Roles
 
-`src/`
+**`src/`**
 Contains reusable implementations and is the source of truth for model and loss code.
 
-`tests/`
+**`tests/`**
 Checks scientific and software invariants of the implementation.
 
-`scripts/`
+**`scripts/`**
 Contains executable training and evaluation experiments.
 
-`configs/`
+**`configs/`**
 Stores explicit experimental variables and interventions.
 
-`notebooks/`
+**`notebooks/`**
 Used for interactive reasoning, visualization, and inspection. Notebooks are not the source of truth for implementations.
 
-`experiments/`
+**`experiments/`**
 Records research questions, hypotheses, predictions, controls, results, and interpretations.
 
-`outputs/`
+**`outputs/`**
 Contains generated checkpoints, logs, metrics, figures, and other run artifacts. These are not committed to Git.
 
 ---
 
 ## Environment Setup
 
-This project uses [uv](https://docs.astral.sh/uv/) for dependency and environment management.
+This project uses `uv` for dependency and environment management.
 
 Install dependencies:
 
@@ -187,15 +197,15 @@ uv run jupyter lab
 
 ### Experiment 001 — CLIP Loss Sanity Check
 
-**Question**
+#### Question
 
 Does our implementation of the symmetric CLIP objective behave as expected?
 
-**Hypothesis**
+#### Hypothesis
 
 Correctly aligned image-text pairs should produce substantially lower contrastive loss than incorrectly paired embeddings.
 
-**Method**
+#### Method
 
 We constructed small synthetic image and text embedding matrices with known geometric relationships.
 
@@ -215,26 +225,30 @@ Observed shuffled loss:
 10.73849
 ```
 
-For comparison, a uniform prediction over four candidates would have cross-entropy
+For comparison, a uniform prediction over four candidates would have cross-entropy:
 
-$$
-\log(4) \approx 1.386.
-$$
+```math
+-\log\left(\frac{1}{4}\right)
+=
+\log(4)
+\approx
+1.386
+```
 
-The shuffled loss being much larger than this indicates that the model is not merely uncertain: the embedding geometry is often **confidently aligned with the wrong target**, which the temperature-scaled cross-entropy strongly penalizes.
+The shuffled loss being much larger than this indicates that the model is not merely uncertain. The embedding geometry is often **confidently aligned with the wrong target**, which the temperature-scaled cross-entropy strongly penalizes.
 
-### What this establishes
+### What This Establishes
 
 This result is consistent with the intended CLIP objective: the loss is sensitive to correct image-text correspondence.
 
-### What this does not establish
+### What This Does Not Establish
 
 It does not yet prove that the implementation is fully correct.
 
 A single toy example could still pass despite a subtle bug. Additional tests should examine invariants such as:
 
 * image-text / text-image symmetry,
-* permutation invariance,
+* permutation behavior,
 * gradient flow,
 * normalization behavior,
 * temperature effects,
@@ -283,7 +297,7 @@ Investigate how image-text alignment changes under controlled distribution shift
 * noise,
 * occlusion,
 * contrast changes,
-* or other visual corruptions.
+* other visual corruptions.
 
 The goal will be to distinguish changes in:
 
